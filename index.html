@@ -905,7 +905,7 @@
                 location.reload();
             });
 
-            navigator.serviceWorker.register('sw.js').then(reg => {
+            navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
                 // On the very first visit there is no controller yet, so nothing to update.
                 if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
                 reg.addEventListener('updatefound', () => {
@@ -918,6 +918,7 @@
                 const check = () => reg.update().catch(() => {});
                 setInterval(check, 60 * 60 * 1000);
                 document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+                window.addEventListener('online', check);
             }).catch(() => { /* offline support is optional */ });
         }
     </script>
