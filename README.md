@@ -6,7 +6,7 @@ An HP-style Reverse Polish Notation calculator that runs in the browser. It has 
 
 **Live demo: https://cstroie.github.io/RPN-4/**
 
-<img src="docs/screenshot.png" alt="The RPN-4 calculator on a phone" width="320">
+<img src="docs/screenshot-phone.png" alt="The RPN-4 calculator on a phone" width="320">
 
 ## RPN in one minute
 
