@@ -506,6 +506,20 @@
         }
 
         record(step) {
+            // Keys typed while entering a number collapse into one 'num' step:
+            // its text is replayed key by key ('.' point, 'E' EEX, '±' CHS).
+            const last = this.program[this.program.length - 1];
+            const inNum = last && last.k === 'num';
+            const ch = step.k === 'digit' ? String(step.v).toUpperCase()
+                : step.k === 'act' ? { point: '.', eex: 'E', chs: inNum ? '±' : null }[step.v] : null;
+            if (ch) {
+                if (inNum) { last.v += ch; return; }
+                step = { k: 'num', v: ch };
+            } else if (inNum && step.k === 'act' && step.v === 'backspace') {
+                last.v = last.v.slice(0, -1);
+                if (!last.v) this.program.pop();
+                return;
+            }
             if (this.program.length >= MAX_PROGRAM) { this.error = 'Program full'; return; }
             this.program.push(step);
         }
@@ -544,6 +558,12 @@
         execStep(step) {
             switch (step.k) {
                 case 'digit': return this.digit(step.v);
+                case 'num':
+                    for (const c of step.v) {
+                        if (c === '.') this.point(); else if (c === 'E') this.eex(); else if (c === '±') this.chs(); else this.digit(c);
+                        if (this.error) return;
+                    }
+                    return;
                 case 'op': return this.op(step.v);
                 case 'act': return this[step.v]();
                 case 'sto': return this.act(() => { this.commit(); this.regs[step.v] = this.x; this.lift = true; }, 'STO ' + step.v);
@@ -612,12 +632,25 @@
     function stepLabel(step) {
         switch (step.k) {
             case 'digit': return step.v;
+            case 'num': return numLabel(step.v);
             case 'op': return OP_LABELS[step.v] || step.v.toUpperCase();
             case 'act': return ACT_LABELS[step.v] || step.v;
             case 'test': return step.v + '?';
             case 'rs': return 'R/S';
             default: return step.k.toUpperCase() + ' ' + step.v;
         }
+    }
+
+    /** Show a recorded number as typed, with CHS applied to mantissa or exponent. */
+    function numLabel(v) {
+        let m = '', e = null, neg = false, eneg = false;
+        for (const c of v) {
+            if (c === '±') { if (e === null) neg = !neg; else eneg = !eneg; }
+            else if (c === 'E') e = '';
+            else if (e === null) m += c; else e += c;
+        }
+        if (m.startsWith('.')) m = '0' + m;
+        return (neg ? '-' : '') + (m || (e !== null ? '1' : '0')) + (e !== null ? 'E' + (eneg ? '-' : '') + e : '');
     }
 
     const ACT_LABELS = {

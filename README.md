@@ -66,7 +66,7 @@ The row of tabs above the keypad switches the five soft keys:
 
 ### Programs
 
-There are ten program slots, 0–9. Press **P/R** then a digit and the keys you press are recorded into that program instead of being run; the display lists the last steps and the annunciator shows `PRGM slot·steps`. Press **P/R** again to stop recording, then **R/S** and a digit to run that program. **DEL** and **CLP** act on the program last selected. A false test skips the next step, so `x=0?` followed by `GTO 1` jumps only when X is zero. All programs are saved in local storage with the rest of the state and included in share links; a program saved by an older version loads into slot 0.
+There are ten program slots, 0–9. Press **P/R** then a digit and the keys you press are recorded into that program instead of being run; a number such as `1.8E-3` is stored as a single step (⌫ edits it), the display lists the last steps and the annunciator shows `PRGM slot·steps`. Press **P/R** again to stop recording, then **R/S** and a digit to run that program. **DEL** and **CLP** act on the program last selected. A false test skips the next step, so `x=0?` followed by `GTO 1` jumps only when X is zero. All programs are saved in local storage with the rest of the state and included in share links; a program saved by an older version loads into slot 0.
 
 ### Paper tape
 

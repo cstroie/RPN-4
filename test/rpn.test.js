@@ -213,7 +213,7 @@ test('programs with labels, GTO and conditional tests loop', () => {
     for (const st of steps) c.key(st.k === 'sto' || st.k === 'rcl' || st.k === 'lbl' || st.k === 'gto'
         ? { k: 'prefix', v: st.k.toUpperCase() } : st) || (['sto', 'rcl', 'lbl', 'gto'].includes(st.k) && c.key({ k: 'digit', v: String(st.v) }));
     c.togglePrgm();
-    assert.equal(c.program.length, steps.length);
+    assert.equal(c.program.length, steps.length - 1);  // "1 0" is one step
     c.run();
     assert.equal(c.error, null);
     assert.equal(c.regs[1], 55);
@@ -281,4 +281,15 @@ test('printPrograms lists non-empty programs on the tape', () => {
     assert.deepEqual(c.tape, [
         { op: 'PRGM 2', x: '2 steps' }, { num: '01  ENTER' }, { num: '02  ×' }, { num: '----' }
     ]);
+});
+
+test('numbers typed while recording become one step', () => {
+    const c = new RPN();
+    c.togglePrgm(); c.key({ k: 'digit', v: '0' });
+    for (const k of [['digit', '1'], ['act', 'point'], ['digit', '8'], ['digit', '9'], ['act', 'backspace'],
+        ['act', 'eex'], ['digit', '2'], ['act', 'chs'], ['act', 'enter'], ['digit', '3'], ['op', '*']]) c.key({ k: k[0], v: k[1] });
+    c.togglePrgm();
+    assert.deepEqual(c.program.map(stepLabel), ['1.8E-2', 'ENTER', '3', '×']);
+    c.run();
+    assert.ok(Math.abs(c.x - 0.054) < 1e-12);
 });
