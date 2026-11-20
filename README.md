@@ -1,12 +1,12 @@
 # RPN-4 Scientific Calculator
 
-[![test](https://github.com/cstroie/rpn/actions/workflows/test.yml/badge.svg)](https://github.com/cstroie/rpn/actions/workflows/test.yml)
+[![test](https://github.com/cstroie/RPN-4/actions/workflows/test.yml/badge.svg)](https://github.com/cstroie/RPN-4/actions/workflows/test.yml)
 
 An HP-style Reverse Polish Notation calculator that runs in the browser. It has a four-level stack, classic stack-lift behaviour, scientific functions, memory registers and undo. There are no dependencies and no build step.
 
-**Live demo: https://cstroie.github.io/rpn/**
+**Live demo: https://cstroie.github.io/RPN-4/**
 
-<img src="docs/screenshot.png" alt="The RPN-4 calculator" width="360">
+<img src="docs/screenshot.png" alt="The RPN-4 calculator on a phone" width="320">
 
 ## RPN in one minute
 
@@ -42,6 +42,8 @@ The stack behaves like an HP calculator:
 - **Errors:** errors such as divide by zero or the square root of a negative number are shown on the display, and the stack is left unchanged.
 - **Persistence:** the stack, memories and angle mode are kept between visits.
 - **Clipboard:** click the display or press `Ctrl+C` to copy X. `Ctrl+V` pastes a number into X.
+- **Help:** the **HELP** button in the header opens a quick reference over the calculator.
+- **Feedback:** each key press gives a short click, and a tiny vibration on phones that support it.
 - **Share:** the **SHARE** button copies a link with the stack, memories and angle mode packed into the address.
 
 Gold labels are second functions: press **SHIFT** (or `f`), then the key.
@@ -83,7 +85,10 @@ The **TAPE** button in the header opens a paper tape panel over the calculator, 
 
 ## Install and offline use
 
-The page is a Progressive Web App. Your browser offers to install it (on a phone, use **Add to Home Screen**). After the first visit it also works offline: a service worker (`sw.js`) caches the app and refreshes it in the background, so updates appear on the next visit.
+The page is a Progressive Web App. Your browser offers to install it (on a phone, use **Add to Home Screen**). After the first visit it also works offline: a service worker (`sw.js`) caches the app and refreshes it in the background.
+
+- **Full screen:** once installed, the app runs full screen in portrait. On Android the system bars are hidden (if they show, the first tap hides them); on iPhone the app fills the screen under the status bar.
+- **Updates:** the app checks for a new version when it opens, when you return to it, when the device comes back online and every hour. When one is ready, an **UPDATE AVAILABLE** banner appears; tap **RELOAD** to switch.
 
 ## Layout
 

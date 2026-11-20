@@ -630,6 +630,16 @@
                 if (navigator.vibrate) navigator.vibrate(8);
             }
 
+            // Installed app not already fullscreen (old install, shortcut, other browser):
+            // request it on a tap, since browsers only allow that from a user gesture.
+            const installed = () => matchMedia('(display-mode: standalone), (display-mode: minimal-ui)').matches;
+            document.addEventListener('pointerup', () => {
+                const el = document.documentElement;
+                if (installed() && !document.fullscreenElement && el.requestFullscreen) {
+                    el.requestFullscreen({ navigationUI: 'hide' }).catch(() => {});
+                }
+            });
+
             const keys = $('keys');
             document.querySelector('.calc').addEventListener('click', e => {
                 const btn = e.target.closest('.key');

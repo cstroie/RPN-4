@@ -4,7 +4,7 @@
  * in the background. A new worker waits until the page asks it to take over
  * (see the update banner in index.html), so the user decides when to reload.
  */
-const CACHE = 'rpn-v7';
+const CACHE = 'rpn-v8';
 const SHELL = [
     './',
     'index.html',
