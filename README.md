@@ -8,6 +8,10 @@ An HP-style Reverse Polish Notation calculator that runs in the browser. It has 
 
 <img src="docs/screenshot-phone.png" alt="The RPN-4 calculator on a phone" width="320">
 
+Turn the phone sideways for a landscape layout in the style of the HP-12C: the stack display on the left, the keypad on the right with a tall ENTER key.
+
+<img src="docs/screenshot-landscape.png" alt="The RPN-4 calculator in landscape" width="640">
+
 ## RPN in one minute
 
 Enter the numbers first, then the operation:
@@ -87,7 +91,7 @@ The **TAPE** button in the header opens a paper tape panel over the calculator, 
 
 The page is a Progressive Web App. Your browser offers to install it (on a phone, use **Add to Home Screen**). After the first visit it also works offline: a service worker (`sw.js`) caches the app and refreshes it in the background.
 
-- **Full screen:** once installed, the app runs full screen in portrait. On Android the system bars are hidden (if they show, the first tap hides them); on iPhone the app fills the screen under the status bar.
+- **Full screen:** once installed, the app runs full screen, in portrait or landscape. On Android the system bars are hidden (if they show, the first tap hides them); on iPhone the app fills the screen under the status bar.
 - **Updates:** the app checks for a new version when it opens, when you return to it, when the device comes back online and every hour. When one is ready, an **UPDATE AVAILABLE** banner appears; tap **RELOAD** to switch.
 
 ## Layout
