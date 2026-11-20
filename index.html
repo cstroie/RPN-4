@@ -308,6 +308,7 @@
 
         #tape li { display: flex; justify-content: space-between; gap: 12px; }
         #tape li.num { justify-content: flex-end; }
+        #tape li.step { justify-content: flex-start; white-space: pre; }
         #tape li.op b { font-weight: normal; color: #8a5a10; }
         #tape:empty::before { content: 'Operations will be printed here.'; color: #9b968a; }
 
@@ -841,7 +842,10 @@
                 ol.textContent = '';
                 for (const e of t) {
                     const li = document.createElement('li');
-                    if (e.num !== undefined) {
+                    if (e.step !== undefined) {
+                        li.className = 'step';
+                        li.textContent = e.step;
+                    } else if (e.num !== undefined) {
                         li.className = 'num';
                         li.textContent = e.num;
                     } else {
@@ -861,7 +865,7 @@
             $('tapeClear').addEventListener('click', e => { e.preventDefault(); calc.clearTape(); render(); });
             $('tapeCopy').addEventListener('click', e => {
                 e.preventDefault();
-                const text = calc.tape.map(x => (x.num !== undefined ? x.num : `${x.op}  = ${x.x}`)).join('\n');
+                const text = calc.tape.map(x => (x.step !== undefined ? x.step : x.num !== undefined ? x.num : `${x.op}  = ${x.x}`)).join('\n');
                 navigator.clipboard?.writeText(text).then(() => { showFlash('TAPE COPIED'); render(); }, () => {});
             });
 

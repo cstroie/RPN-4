@@ -544,8 +544,8 @@
                 if (!p.length) return;
                 any = true;
                 this.tape.push({ op: `PRGM ${n}`, x: `${p.length} steps` });
-                p.forEach((st, i) => this.tape.push({ num: `${String(i + 1).padStart(2, '0')}  ${stepLabel(st)}` }));
-                this.tape.push({ num: '----' });
+                p.forEach((st, i) => this.tape.push({ step: `${String(i + 1).padStart(2, '0')}  ${stepLabel(st)}` }));
+                this.tape.push({ step: '----' });
             });
             if (!any) this.error = 'No program';
             if (this.tape.length > MAX_TAPE) this.tape.splice(0, this.tape.length - MAX_TAPE);

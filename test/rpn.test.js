@@ -279,7 +279,7 @@ test('printPrograms lists non-empty programs on the tape', () => {
     c.programs[2] = [{ k: 'act', v: 'enter' }, { k: 'op', v: '*' }];
     c.printPrograms();
     assert.deepEqual(c.tape, [
-        { op: 'PRGM 2', x: '2 steps' }, { num: '01  ENTER' }, { num: '02  ×' }, { num: '----' }
+        { op: 'PRGM 2', x: '2 steps' }, { step: '01  ENTER' }, { step: '02  ×' }, { step: '----' }
     ]);
 });
 
