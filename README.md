@@ -6,9 +6,9 @@ An HP-style Reverse Polish Notation calculator that runs in the browser. It has 
 
 **Live demo: https://cstroie.github.io/RPN-4/**
 
-<img src="docs/screenshot-landscape.png" alt="The RPN-4 calculator in landscape, HP-12C style" width="720">
+<img src="docs/screenshot-landscape-2.png" alt="The RPN-4 calculator in landscape, HP-12C style" width="720">
 
-Turned sideways, the phone gets a landscape layout in the style of the HP-12C: the stack display on the left, the keypad on the right with a tall ENTER key. Held upright, it uses the portrait layout:
+Turned sideways, the phone gets a landscape layout: the stack display with the function keys under it on the left, and the number pad with a tall ENTER key, HP-12C style, on the right. Held upright, it uses the portrait layout:
 
 <img src="docs/screenshot-phone.png" alt="The RPN-4 calculator on a phone in portrait" width="280">
 
