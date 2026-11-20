@@ -6,11 +6,11 @@ An HP-style Reverse Polish Notation calculator that runs in the browser. It has 
 
 **Live demo: https://cstroie.github.io/RPN-4/**
 
-<img src="docs/screenshot-phone.png" alt="The RPN-4 calculator on a phone" width="320">
+<img src="docs/screenshot-landscape.png" alt="The RPN-4 calculator in landscape, HP-12C style" width="720">
 
-Turn the phone sideways for a landscape layout in the style of the HP-12C: the stack display on the left, the keypad on the right with a tall ENTER key.
+Turned sideways, the phone gets a landscape layout in the style of the HP-12C: the stack display on the left, the keypad on the right with a tall ENTER key. Held upright, it uses the portrait layout:
 
-<img src="docs/screenshot-landscape.png" alt="The RPN-4 calculator in landscape" width="640">
+<img src="docs/screenshot-phone.png" alt="The RPN-4 calculator on a phone in portrait" width="280">
 
 ## RPN in one minute
 
