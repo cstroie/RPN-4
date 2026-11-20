@@ -609,7 +609,49 @@
         }
     }
 
-    const NOT_RECORDED = new Set(['togglePrgm', 'clearProgram', 'deleteStep', 'undo', 'run', 'clearTape', 'runPrompt', 'printPrograms']);
+    // ---- sample programs (slot → steps) ----------------------------------
+    const o = v => ({ k: 'op', v }), a = v => ({ k: 'act', v }), n = v => ({ k: 'num', v });
+    const sto = v => ({ k: 'sto', v }), rcl = v => ({ k: 'rcl', v });
+    const lbl = v => ({ k: 'lbl', v }), gto = v => ({ k: 'gto', v }), tst = v => ({ k: 'test', v });
+    const SAMPLES = [
+        // 0  Hypotenuse: a ENTER b → √(a²+b²)
+        { name: 'Hypotenuse', steps: [o('sq'), a('swap'), o('sq'), o('+'), o('sqrt')] },
+        // 1  °C → °F
+        { name: '°C → °F', steps: [n('1.8'), o('*'), n('32'), o('+')] },
+        // 2  Quadratic: a ENTER b ENTER c → X = x₂, Y = x₁
+        { name: 'Quadratic roots', steps: [
+            sto(2), a('rollDown'), sto(1), a('rollDown'), sto(0),
+            rcl(1), o('sq'), n('4'), rcl(0), o('*'), rcl(2), o('*'), o('-'), o('sqrt'), sto(3),
+            rcl(1), a('chs'), rcl(3), o('+'), n('2'), rcl(0), o('*'), o('/'),
+            rcl(1), a('chs'), rcl(3), o('-'), n('2'), rcl(0), o('*'), o('/')] },
+        // 3  Loan payment: P ENTER rate% ENTER n → P·r / (1 − (1+r)⁻ⁿ)
+        { name: 'Loan payment', steps: [
+            sto(2), a('rollDown'), n('100'), o('/'), sto(1), a('rollDown'), sto(0),
+            rcl(0), rcl(1), o('*'), n('1'), rcl(1), o('+'), rcl(2), a('chs'), o('pow'),
+            n('1'), a('swap'), o('-'), o('/')] },
+        // 4  GCD (Euclid): a ENTER b → gcd
+        { name: 'GCD', steps: [
+            lbl(0), tst('x=0'), gto(1), sto(0), o('mod'), rcl(0), a('swap'), gto(0), lbl(1), a('swap')] },
+        // 5  Fibonacci: n → F(n)
+        { name: 'Fibonacci', steps: [
+            sto(0), n('0'), sto(1), n('1'), sto(2),
+            lbl(0), rcl(0), tst('x=0'), gto(1), n('1'), o('-'), sto(0),
+            rcl(1), rcl(2), sto(1), o('+'), sto(2), gto(0),
+            lbl(1), rcl(1)] }
+    ];
+
+    /** Fill empty program slots with the samples; returns how many were loaded. */
+    RPN.prototype.loadSamples = function () {
+        let count = 0;
+        SAMPLES.forEach((s, i) => {
+            if (this.programs[i].length) return;
+            this.programs[i] = s.steps.map(st => ({ ...st }));
+            count++;
+        });
+        return count;
+    };
+
+    const NOT_RECORDED = new Set(['togglePrgm', 'clearProgram', 'deleteStep', 'undo', 'run', 'clearTape', 'runPrompt', 'printPrograms', 'loadSamples']);
 
     const TESTS = {
         'x=0': x => x === 0,
@@ -710,7 +752,7 @@
         return calc.entry !== null ? (calc.entry || '0') : calc.format(calc.x);
     }
 
-    const api = { RPN, CalcError, format, formatDisplay, displayX, stepLabel, TESTS };
+    const api = { RPN, CalcError, format, formatDisplay, displayX, stepLabel, TESTS, SAMPLES };
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
     else root.RPNCore = api;
 })(typeof window !== 'undefined' ? window : globalThis);

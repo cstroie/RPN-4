@@ -556,6 +556,16 @@
         <h3>MENUS</h3>
         <p><b>MODE</b>: STD, FIX n, SCI n and ENG n (press the key, then a digit) and DEG/RAD. <b>STAT</b>: Σ+ adds X to the statistics; x̄ is the mean, s the standard deviation. <b>BASE</b> and <b>LOGIC</b>: HEX/DEC/OCT/BIN integer modes (32-bit) with AND, OR, XOR, NOT and shifts; type A–F with the extra row or the keyboard.</p>
         <p><b>PRGM</b>: there are ten programs, 0–9. Press P/R then a digit and every key you press is recorded into that program instead of run; a typed number is one step. Press P/R again to stop; R/S then a digit runs that program. Programs are kept between visits; PRGM on the paper tape prints all listings for reference. LBL n and GTO n make loops. SHIFT gives the tests x≠0?, x=0?, x≤y? and x&gt;y?; a false test skips the next step. R/S inside a program stops it. DEL removes the last step and SHIFT P/R clears the current program.</p>
+        <h3 style="display: flex; align-items: center">SAMPLE PROGRAMS <span class="tape-tools"><button id="loadSamples" type="button" title="Load the samples into empty program slots">LOAD</button></span></h3>
+        <table>
+            <tr><td>R/S 0</td><td>hypotenuse: a ENTER b → √(a²+b²)</td></tr>
+            <tr><td>R/S 1</td><td>°C → °F</td></tr>
+            <tr><td>R/S 2</td><td>quadratic: a ENTER b ENTER c → roots in X and Y</td></tr>
+            <tr><td>R/S 3</td><td>loan: P ENTER rate% ENTER n → payment per period</td></tr>
+            <tr><td>R/S 4</td><td>GCD: a ENTER b → greatest common divisor</td></tr>
+            <tr><td>R/S 5</td><td>Fibonacci: n → F(n)</td></tr>
+        </table>
+        <p>They are loaded on first use; LOAD puts them back into any empty slot without touching your own programs.</p>
         <h3>KEYBOARD</h3>
         <table>
             <tr><td><kbd>0</kbd>–<kbd>9</kbd> <kbd>.</kbd></td><td>digits</td></tr>
@@ -589,6 +599,7 @@
             try {
                 const saved = localStorage.getItem(SAVE_KEY);
                 if (saved) calc.load(saved);
+                else calc.loadSamples();   // first visit: ship the sample programs
             } catch (e) { /* storage unavailable */ }
 
             function save() {
@@ -861,6 +872,12 @@
                 ol.scrollTop = ol.scrollHeight;
             }
 
+            $('loadSamples').addEventListener('click', e => {
+                e.preventDefault();
+                const n = calc.loadSamples();
+                showFlash(n ? `${n} SAMPLES LOADED` : 'SLOTS IN USE');
+                render();
+            });
             $('tapePrint').addEventListener('click', e => { e.preventDefault(); calc.printPrograms(); render(); });
             $('tapeClear').addEventListener('click', e => { e.preventDefault(); calc.clearTape(); render(); });
             $('tapeCopy').addEventListener('click', e => {

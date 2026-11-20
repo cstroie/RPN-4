@@ -293,3 +293,33 @@ test('numbers typed while recording become one step', () => {
     c.run();
     assert.ok(Math.abs(c.x - 0.054) < 1e-12);
 });
+
+test('sample programs compute the documented results', () => {
+    const { SAMPLES } = require('../rpn.js');
+    const run = (slot, inputs) => {
+        const c = new RPN();
+        c.loadSamples();
+        inputs.forEach((v, i) => {
+            if (i) c.enter();
+            c.execStep({ k: 'num', v: String(Math.abs(v)) + (v < 0 ? '±' : '') });
+        });
+        c.slot = slot; c.run();
+        assert.equal(c.error, null, SAMPLES[slot].name);
+        return c;
+    };
+    assert.equal(run(0, [3, 4]).x, 5);
+    assert.ok(Math.abs(run(1, [100]).x - 212) < 1e-9);
+    const q = run(2, [1, -3, 2]);
+    assert.deepEqual([q.y, q.x], [2, 1]);
+    assert.ok(Math.abs(run(3, [10000, 1, 12]).x - 888.4878867834) < 1e-6);
+    assert.equal(run(4, [48, 18]).x, 6);
+    assert.equal(run(5, [10]).x, 55);
+});
+
+test('loadSamples only fills empty slots', () => {
+    const c = new RPN();
+    c.programs[0] = [{ k: 'op', v: 'ln' }];
+    assert.equal(c.loadSamples(), 5);
+    assert.deepEqual(c.programs[0], [{ k: 'op', v: 'ln' }]);
+    assert.equal(c.loadSamples(), 0);
+});

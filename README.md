@@ -68,6 +68,19 @@ The row of tabs above the keypad switches the five soft keys:
 
 There are ten program slots, 0–9. Press **P/R** then a digit and the keys you press are recorded into that program instead of being run; a number such as `1.8E-3` is stored as a single step (⌫ edits it), the display lists the last steps and the annunciator shows `PRGM slot·steps`. Press **P/R** again to stop recording, then **R/S** and a digit to run that program. **DEL** and **CLP** act on the program last selected. A false test skips the next step, so `x=0?` followed by `GTO 1` jumps only when X is zero. All programs are saved in local storage with the rest of the state and included in share links; a program saved by an older version loads into slot 0.
 
+### Sample programs
+
+Six sample programs are loaded on first use. **LOAD** under *Sample programs* in the help panel puts them back into any empty slot without touching your own programs.
+
+| Run | Program | Input → output |
+|---|---|---|
+| `R/S 0` | Hypotenuse | `a ENTER b` → √(a² + b²) |
+| `R/S 1` | °C → °F | `°C` → °F |
+| `R/S 2` | Quadratic roots | `a ENTER b ENTER c` → x₁ in Y, x₂ in X (uses R0–R3) |
+| `R/S 3` | Loan payment | `P ENTER rate% ENTER n` → payment per period (uses R0–R2) |
+| `R/S 4` | GCD (Euclid) | `a ENTER b` → greatest common divisor (uses R0) |
+| `R/S 5` | Fibonacci | `n` → F(n) (uses R0–R2) |
+
 ### Paper tape
 
 The **TAPE** button in the header opens a paper tape panel over the calculator, which prints every number entered and every operation with its result, like a printing calculator. The **PRGM** button on the tape prints the numbered listing of every non-empty program for reference. You can copy the tape as text.
