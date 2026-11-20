@@ -608,10 +608,28 @@
                 render();
             }
 
+            // ---- key click (synthesized, no asset) ----
+            let audioCtx = null;
+            function click() {
+                try {
+                    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
+                    const t = audioCtx.currentTime, len = Math.floor(audioCtx.sampleRate * 0.012);
+                    const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate), data = buf.getChannelData(0);
+                    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 4);
+                    const src = audioCtx.createBufferSource(), filt = audioCtx.createBiquadFilter(), gain = audioCtx.createGain();
+                    src.buffer = buf; filt.type = 'bandpass'; filt.frequency.value = 3000; filt.Q.value = 1.2;
+                    gain.gain.value = 0.35;
+                    src.connect(filt).connect(gain).connect(audioCtx.destination);
+                    src.start(t);
+                } catch (_) { /* audio unavailable */ }
+                if (navigator.vibrate) navigator.vibrate(8);
+            }
+
             const keys = $('keys');
             document.querySelector('.calc').addEventListener('click', e => {
                 const btn = e.target.closest('.key');
-                if (btn) press(btn);
+                if (btn) { click(); press(btn); }
             });
 
             // ---- soft menus ----
