@@ -183,6 +183,7 @@ test('paper tape records numbers, operations and results', () => {
 test('keystroke programs record and run', () => {
     const c = new RPN();
     c.togglePrgm();
+    c.key({ k: 'digit', v: '0' });
     // Program: square X and add 1
     c.key({ k: 'act', v: 'enter' });
     c.key({ k: 'op', v: '*' });
@@ -208,6 +209,7 @@ test('programs with labels, GTO and conditional tests loop', () => {
         { k: 'gto', v: 1 }
     ];
     c.togglePrgm();
+    c.key({ k: 'digit', v: '0' });
     for (const st of steps) c.key(st.k === 'sto' || st.k === 'rcl' || st.k === 'lbl' || st.k === 'gto'
         ? { k: 'prefix', v: st.k.toUpperCase() } : st) || (['sto', 'rcl', 'lbl', 'gto'].includes(st.k) && c.key({ k: 'digit', v: String(st.v) }));
     c.togglePrgm();
@@ -232,4 +234,51 @@ test('program, display mode and base survive serialize/load', () => {
     b.load(a.serialize());
     assert.deepEqual(b.program, a.program);
     assert.deepEqual(b.disp, a.disp);
+});
+
+test('ten program slots chosen with P/R n and run with R/S n', () => {
+    const c = new RPN();
+    c.togglePrgm(); c.key({ k: 'digit', v: '3' });
+    assert.equal(c.recording, true);
+    c.key({ k: 'act', v: 'enter' }); c.key({ k: 'op', v: '*' });
+    c.togglePrgm();
+    c.togglePrgm(); c.key({ k: 'digit', v: '5' });
+    c.key({ k: 'digit', v: '1' }); c.key({ k: 'op', v: '+' });
+    c.togglePrgm();
+    assert.equal(c.programs[3].length, 2);
+    assert.equal(c.programs[5].length, 2);
+    assert.equal(c.programs[0].length, 0);
+    c.digit('4');
+    c.runPrompt(); c.key({ k: 'digit', v: '3' });
+    assert.equal(c.x, 16);
+    c.runPrompt(); c.key({ k: 'digit', v: '5' });
+    assert.equal(c.x, 17);
+});
+
+test('all programs survive serialize/load; legacy single program goes to slot 0', () => {
+    const a = new RPN();
+    a.programs[7] = [{ k: 'op', v: 'sqrt' }];
+    a.slot = 7;
+    const b = new RPN();
+    b.load(a.serialize());
+    assert.deepEqual(b.programs[7], a.programs[7]);
+    assert.equal(b.slot, 7);
+    const legacy = JSON.parse(a.serialize());
+    delete legacy.programs; delete legacy.slot;
+    legacy.program = [{ k: 'op', v: 'ln' }];
+    const c = new RPN();
+    c.load(JSON.stringify(legacy));
+    assert.deepEqual(c.programs[0], legacy.program);
+});
+
+test('printPrograms lists non-empty programs on the tape', () => {
+    const c = new RPN();
+    c.printPrograms();
+    assert.equal(c.error, 'No program');
+    c.error = null;
+    c.programs[2] = [{ k: 'act', v: 'enter' }, { k: 'op', v: '*' }];
+    c.printPrograms();
+    assert.deepEqual(c.tape, [
+        { op: 'PRGM 2', x: '2 steps' }, { num: '01  ENTER' }, { num: '02  ×' }, { num: '----' }
+    ]);
 });

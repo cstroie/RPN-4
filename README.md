@@ -36,8 +36,8 @@ The stack behaves like an HP calculator:
 - **Display:** STD, FIX, SCI and ENG with 0–9 digits
 - **Programmer:** HEX/DEC/OCT/BIN with AND, OR, XOR, NOT, shifts and MOD
 - **Statistics:** Σ+, Σ−, mean and standard deviation
-- **Programming:** record keystrokes, with labels, GTO and conditional tests
-- **Paper tape:** a printed log of each calculation
+- **Programming:** ten keystroke programs on keys 0–9, with labels, GTO and conditional tests
+- **Paper tape:** a printed log of each calculation, and program listings
 - **Functions:** `√x`, `x²`, `1/x`, `n!`, `LN`, `eˣ`, `LOG`, `10ˣ`, `SIN` / `COS` / `TAN` and their inverses in degrees or radians, `ABS`, `π`
 - **Stack:** `x↔y`, `R↓`, `R↑`, `LAST x`, `CLX`, `CLR ALL`
 - **Entry:** `CHS` (also flips the exponent sign while typing it), `EEX` for exponents such as `6.02 EEX 23`, and `⌫` to delete a digit
@@ -62,15 +62,15 @@ The row of tabs above the keypad switches the five soft keys:
 | **STAT** | `Σ+` / `Σ−` add or remove X (X then shows the count), `x̄` mean, `s` standard deviation, `CLΣ` |
 | **BASE** | `HEX`, `DEC`, `OCT`, `BIN` integer modes (32-bit two's complement), `MOD`; in HEX an extra row has `A`–`F` |
 | **LOGIC** | `AND`, `OR`, `XOR`, `NOT`, `SL` / `SR` (shift left or right) |
-| **PRGM** | `P/R` record or stop recording, `R/S` run (or stop, inside a program), `LBL n`, `GTO n`, `DEL`; with SHIFT: `CLP`, `x≠0?`, `x=0?`, `x≤y?`, `x>y?` |
+| **PRGM** | `P/R n` record program n (or stop recording), `R/S n` run program n (or stop, inside a program), `LBL n`, `GTO n`, `DEL`; with SHIFT: `CLP`, `x≠0?`, `x=0?`, `x≤y?`, `x>y?` |
 
 ### Programs
 
-Press **P/R** and the keys you press are recorded as program steps instead of being run; the display lists the last steps. Press **P/R** again to stop recording, then **R/S** to run it. A false test skips the next step, so `x=0?` followed by `GTO 1` jumps only when X is zero. Programs are saved with the rest of the state and included in share links.
+There are ten program slots, 0–9. Press **P/R** then a digit and the keys you press are recorded into that program instead of being run; the display lists the last steps and the annunciator shows `PRGM slot·steps`. Press **P/R** again to stop recording, then **R/S** and a digit to run that program. **DEL** and **CLP** act on the program last selected. A false test skips the next step, so `x=0?` followed by `GTO 1` jumps only when X is zero. All programs are saved in local storage with the rest of the state and included in share links; a program saved by an older version loads into slot 0.
 
 ### Paper tape
 
-The **TAPE** button in the header opens a paper tape panel over the calculator, which prints every number entered and every operation with its result, like a printing calculator. You can copy it as text.
+The **TAPE** button in the header opens a paper tape panel over the calculator, which prints every number entered and every operation with its result, like a printing calculator. The **PRGM** button on the tape prints the numbered listing of every non-empty program for reference. You can copy the tape as text.
 
 ## Keyboard
 

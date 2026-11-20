@@ -542,7 +542,7 @@
         </div>
 
         <section class="panel" id="tapePanel" hidden>
-            <div class="panel-head">PAPER TAPE <span class="tape-tools"><button id="tapeCopy" type="button">COPY</button><button id="tapeClear" type="button">CLEAR</button></span></div>
+            <div class="panel-head">PAPER TAPE <span class="tape-tools"><button id="tapePrint" type="button" title="Print program listings">PRGM</button><button id="tapeCopy" type="button">COPY</button><button id="tapeClear" type="button">CLEAR</button></span></div>
             <ol id="tape"></ol>
         </section>
 
@@ -554,7 +554,7 @@
         <p>To store, press <b>STO</b> then a digit 0–9. <b>RCL</b> then a digit recalls it. Click the display to copy X. Your stack and memories are kept between visits.</p>
         <h3>MENUS</h3>
         <p><b>MODE</b>: STD, FIX n, SCI n and ENG n (press the key, then a digit) and DEG/RAD. <b>STAT</b>: Σ+ adds X to the statistics; x̄ is the mean, s the standard deviation. <b>BASE</b> and <b>LOGIC</b>: HEX/DEC/OCT/BIN integer modes (32-bit) with AND, OR, XOR, NOT and shifts; type A–F with the extra row or the keyboard.</p>
-        <p><b>PRGM</b>: press P/R and every key you press is recorded instead of run. Press P/R again to stop, then R/S runs the program. LBL n and GTO n make loops. SHIFT gives the tests x≠0?, x=0?, x≤y? and x&gt;y?; a false test skips the next step. R/S inside a program stops it. DEL removes the last step and SHIFT P/R clears the program.</p>
+        <p><b>PRGM</b>: there are ten programs, 0–9. Press P/R then a digit and every key you press is recorded into that program instead of run. Press P/R again to stop; R/S then a digit runs that program. Programs are kept between visits; PRGM on the paper tape prints all listings for reference. LBL n and GTO n make loops. SHIFT gives the tests x≠0?, x=0?, x≤y? and x&gt;y?; a false test skips the next step. R/S inside a program stops it. DEL removes the last step and SHIFT P/R clears the current program.</p>
         <h3>KEYBOARD</h3>
         <table>
             <tr><td><kbd>0</kbd>–<kbd>9</kbd> <kbd>.</kbd></td><td>digits</td></tr>
@@ -626,7 +626,7 @@
                 $('fPending').classList.toggle('on', !!calc.pending);
                 $('fMode').textContent = calc.base !== 10 ? { 16: 'HEX', 8: 'OCT', 2: 'BIN' }[calc.base]
                     : calc.disp.mode === 'STD' ? '' : `${calc.disp.mode} ${calc.disp.n}`;
-                $('fPrgm').textContent = calc.recording ? `PRGM ${calc.program.length}` : `PRGM`;
+                $('fPrgm').textContent = calc.recording ? `PRGM ${calc.slot}·${calc.program.length}` : `PRGM`;
                 $('fPrgm').classList.toggle('on', calc.recording);
                 $('hexkeys').hidden = calc.base !== 16;
                 renderSoftkeys();
@@ -648,12 +648,12 @@
 
             const UI = {
                 undo: () => calc.undo(),
-                prgm: () => calc.togglePrgm(),
+                prgm: () => { calc.togglePrgm(); if (calc.pending) showFlash('P/R 0–9'); },
                 clp: () => { calc.clearProgram(); showFlash('PROGRAM CLEARED'); },
                 del: () => calc.deleteStep(),
                 rs: () => {
                     if (calc.recording) calc.key({ k: 'rs' });
-                    else { calc.run(); if (!calc.error) showFlash('DONE'); }
+                    else { calc.runPrompt(); showFlash('R/S 0–9'); }
                 }
             };
 
@@ -834,6 +834,7 @@
                 ol.scrollTop = ol.scrollHeight;
             }
 
+            $('tapePrint').addEventListener('click', e => { e.preventDefault(); calc.printPrograms(); render(); });
             $('tapeClear').addEventListener('click', e => { e.preventDefault(); calc.clearTape(); render(); });
             $('tapeCopy').addEventListener('click', e => {
                 e.preventDefault();

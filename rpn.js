@@ -36,7 +36,8 @@
             this.angle = 'DEG';
             this.disp = { mode: 'STD', n: 4 };
             this.base = 10;
-            this.program = [];
+            this.programs = Array.from({ length: 10 }, () => []);
+            this.slot = 0;
             this.recording = false;
             this.tape = [];
         }
@@ -71,7 +72,8 @@
         serialize() {
             const s = this.snapshot();
             s.entry = null;
-            s.program = this.program;
+            s.programs = this.programs;
+            s.slot = this.slot;
             return JSON.stringify(s);
         }
 
@@ -88,7 +90,14 @@
                     disp: s.disp && ['STD', 'FIX', 'SCI', 'ENG'].includes(s.disp.mode) ? s.disp : base.disp,
                     base: [2, 8, 10, 16].includes(s.base) ? s.base : 10
                 });
-                if (Array.isArray(s.program)) this.program = s.program.slice(0, MAX_PROGRAM).filter(st => st && typeof st.k === 'string');
+                const clean = p => (Array.isArray(p) ? p.slice(0, MAX_PROGRAM).filter(st => st && typeof st.k === 'string') : []);
+                if (Array.isArray(s.programs)) {
+                    this.programs = Array.from({ length: 10 }, (_, i) => clean(s.programs[i]));
+                } else if (Array.isArray(s.program)) {
+                    this.programs = Array.from({ length: 10 }, () => []);
+                    this.programs[0] = clean(s.program);   // legacy single program
+                }
+                this.slot = Number.isInteger(s.slot) && s.slot >= 0 && s.slot < 10 ? s.slot : 0;
                 return true;
             } catch (e) {
                 return false;
@@ -475,6 +484,8 @@
         register(n) {
             const mode = this.pending;
             this.pending = null;
+            if (mode === 'PR') { this.slot = n; this.recording = true; this.commit(); return; }
+            if (mode === 'RUN') { this.slot = n; return this.run(); }
             if (this.recording) return this.record({ k: mode.toLowerCase(), v: n });
             this.execStep({ k: mode.toLowerCase(), v: n });
         }
@@ -502,8 +513,28 @@
         togglePrgm() {
             this.pending = null;
             this.error = null;
-            this.recording = !this.recording;
-            if (this.recording) this.commit();
+            if (this.recording) this.recording = false;
+            else this.pending = 'PR';   // P/R then a digit picks the program slot
+        }
+
+        /** R/S then a digit runs that program. */
+        runPrompt() { this.error = null; this.pending = 'RUN'; }
+
+        get program() { return this.programs[this.slot]; }
+        set program(v) { this.programs[this.slot] = v; }
+
+        /** Print every non-empty program listing on the paper tape. */
+        printPrograms() {
+            let any = false;
+            this.programs.forEach((p, n) => {
+                if (!p.length) return;
+                any = true;
+                this.tape.push({ op: `PRGM ${n}`, x: `${p.length} steps` });
+                p.forEach((st, i) => this.tape.push({ num: `${String(i + 1).padStart(2, '0')}  ${stepLabel(st)}` }));
+                this.tape.push({ num: '----' });
+            });
+            if (!any) this.error = 'No program';
+            if (this.tape.length > MAX_TAPE) this.tape.splice(0, this.tape.length - MAX_TAPE);
         }
 
         clearProgram() { this.program = []; }
@@ -558,7 +589,7 @@
         }
     }
 
-    const NOT_RECORDED = new Set(['togglePrgm', 'clearProgram', 'deleteStep', 'undo', 'run', 'clearTape']);
+    const NOT_RECORDED = new Set(['togglePrgm', 'clearProgram', 'deleteStep', 'undo', 'run', 'clearTape', 'runPrompt', 'printPrograms']);
 
     const TESTS = {
         'x=0': x => x === 0,
