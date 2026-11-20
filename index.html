@@ -1007,13 +1007,18 @@
 
             navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
                 // On the very first visit there is no controller yet, so nothing to update.
-                if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
-                reg.addEventListener('updatefound', () => {
-                    const w = reg.installing;
+                const track = w => {
+                    if (!w) return;
+                    if (w.state === 'installed' && navigator.serviceWorker.controller) return offer(w);
                     w.addEventListener('statechange', () => {
                         if (w.state === 'installed' && navigator.serviceWorker.controller) offer(w);
                     });
-                });
+                };
+                if (reg.waiting && navigator.serviceWorker.controller) offer(reg.waiting);
+                // The browser may already be installing an update found during page load,
+                // before this listener existed: track that worker too.
+                track(reg.installing);
+                reg.addEventListener('updatefound', () => track(reg.installing));
                 // Long-lived tabs and installed apps: look for updates periodically and on return.
                 const check = () => reg.update().catch(() => {});
                 setInterval(check, 60 * 60 * 1000);
