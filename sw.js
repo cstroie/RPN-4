@@ -4,7 +4,7 @@
  * in the background. A new worker waits until the page asks it to take over
  * (see the update banner in index.html), so the user decides when to reload.
  */
-const CACHE = 'rpn-v8';
+const CACHE = 'rpn-v9';
 const SHELL = [
     './',
     'index.html',
@@ -28,7 +28,7 @@ self.addEventListener('message', event => {
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys()
-            .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+            .then(keys => Promise.all(keys.filter(k => k.startsWith('rpn-') && k !== CACHE).map(k => caches.delete(k))))
             .then(() => self.clients.claim())
     );
 });
