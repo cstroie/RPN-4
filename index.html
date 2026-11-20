@@ -551,7 +551,7 @@
         <h3>RPN IN ONE MINUTE</h3>
         <p>Enter the numbers first, then the operation. <b>2 ENTER 3 +</b> gives 5. For (3 + 4) × 5, press <b>3 ENTER 4 + 5 ×</b>. You never need brackets or an equals key.</p>
         <p>ENTER copies X into Y. An operation uses X and Y, and the stack drops: Z moves to Y, and T is copied into Z. Gold labels are second functions: press SHIFT, then the key.</p>
-        <p>To store, press <b>STO</b> then a digit 0–9. <b>RCL</b> then a digit recalls it. Click the display to copy X. Your stack and memories are kept between visits.</p>
+        <p>Hold any key for half a second to use its shifted (gold) function, like SHIFT then the key. To store, press <b>STO</b> then a digit 0–9. <b>RCL</b> then a digit recalls it. Click the display to copy X. Your stack and memories are kept between visits.</p>
         <h3>MENUS</h3>
         <p><b>MODE</b>: STD, FIX n, SCI n and ENG n (press the key, then a digit) and DEG/RAD. <b>STAT</b>: Σ+ adds X to the statistics; x̄ is the mean, s the standard deviation. <b>BASE</b> and <b>LOGIC</b>: HEX/DEC/OCT/BIN integer modes (32-bit) with AND, OR, XOR, NOT and shifts; type A–F with the extra row or the keyboard.</p>
         <p><b>PRGM</b>: there are ten programs, 0–9. Press P/R then a digit and every key you press is recorded into that program instead of run; a typed number is one step. Press P/R again to stop; R/S then a digit runs that program. Programs are kept between visits; PRGM on the paper tape prints all listings for reference. LBL n and GTO n make loops. SHIFT gives the tests x≠0?, x=0?, x≤y? and x&gt;y?; a false test skips the next step. R/S inside a program stops it. DEL removes the last step and SHIFT P/R clears the current program.</p>
@@ -726,8 +726,31 @@
             });
 
             const keys = $('keys');
-            document.querySelector('.calc').addEventListener('click', e => {
+            // Long press on a key with a shifted function acts as SHIFT + key.
+            const LONG_PRESS_MS = 450;
+            let longTimer = null, longFired = null;
+            const cancelLong = () => { clearTimeout(longTimer); longTimer = null; };
+            const calcEl = document.querySelector('.calc');
+            calcEl.addEventListener('pointerdown', e => {
+                const btn = e.target.closest('.key[data-alt]');
+                cancelLong();
+                longFired = null;
+                if (!btn || e.button > 0) return;
+                longTimer = setTimeout(() => {
+                    longTimer = null;
+                    longFired = btn;
+                    shifted = true;
+                    click();
+                    if (navigator.vibrate) navigator.vibrate(25);
+                    press(btn);
+                }, LONG_PRESS_MS);
+            });
+            for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) calcEl.addEventListener(ev, cancelLong);
+            calcEl.addEventListener('contextmenu', e => { if (e.target.closest('.key')) e.preventDefault(); });
+
+            calcEl.addEventListener('click', e => {
                 const btn = e.target.closest('.key');
+                if (btn && btn === longFired) { longFired = null; return; }  // already handled as a long press
                 if (btn) { click(); press(btn); }
             });
 

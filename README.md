@@ -50,7 +50,7 @@ The stack behaves like an HP calculator:
 - **Feedback:** each key press gives a short click, and a tiny vibration on phones that support it.
 - **Share:** the **SHARE** button copies a link with the stack, memories and angle mode packed into the address.
 
-Gold labels are second functions: press **SHIFT** (or `f`), then the key.
+Gold labels are second functions: press **SHIFT** (or `f`), then the key, or simply hold the key for half a second.
 
 ### Soft menus
 
