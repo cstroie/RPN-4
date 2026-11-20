@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>RPN Calculator</title>
     <meta name="theme-color" content="#2b2925">
     <meta name="description" content="HP-style RPN scientific calculator.">
@@ -50,7 +53,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            padding: calc(8px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right))
+                     calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
         }
 
         .calc {
@@ -326,7 +330,7 @@
         .update {
             position: fixed;
             left: 50%;
-            top: 12px;
+            top: calc(12px + env(safe-area-inset-top));
             transform: translateX(-50%);
             z-index: 10;
             display: flex;
